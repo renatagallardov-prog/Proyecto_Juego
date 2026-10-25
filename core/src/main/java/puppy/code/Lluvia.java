@@ -1,87 +1,98 @@
 package puppy.code;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 public final class Lluvia implements Dibujable, Destruible {
-    private final Array<Rectangle> posiciones = new Array<>();
-    private final Array<Integer> tipos = new Array<>();
-    private final Texture texturaBuena;
-    private final Texture texturaMala;
-    private final Sound sonidoGota;
+    private static final float INTERVALO = 0.1f;
+    private final Array<ObjetoCaida> objetos = new Array<>();
+    private final FabricaGotas fabricaGotas;
     private final Music musica;
+    private Supplier<EstrategiaCaida> fabricaMovimiento;
     private float tiempoAcumulado;
+    private boolean destruida;
 
-    public Lluvia(Texture buena, Texture mala, Sound sonido, Music musica) {
-        texturaBuena = Objects.requireNonNull(buena);
-        texturaMala = Objects.requireNonNull(mala);
-        sonidoGota = Objects.requireNonNull(sonido);
+    public Lluvia(FabricaGotas fabrica, Music musica) {
+        fabricaGotas = Objects.requireNonNull(fabrica);
         this.musica = Objects.requireNonNull(musica);
-    }
-
-    public void crear() {
         musica.setLooping(true);
         musica.play();
-        generarGota();
+        generarObjeto();
     }
 
-    private void generarGota() {
-        posiciones.add(new Rectangle(
-                MathUtils.random(0, Constantes.ANCHO - Constantes.TAMANO_OBJETO),
-                Constantes.ALTO, Constantes.TAMANO_OBJETO,
-                Constantes.TAMANO_OBJETO));
-        tipos.add(MathUtils.random(1, 100) <= 20 ? 1 : 2);
+    private void generarObjeto() {
+        ObjetoCaida objeto = Objects.requireNonNull(fabricaGotas.crear());
+        if (fabricaMovimiento != null) {
+            objeto.cambiarEstrategia(fabricaMovimiento.get());
+        }
+        objetos.add(objeto);
     }
 
-    public void actualizarMovimiento(Tarro tarro) {
-        if (tarro.estaHerido() || tarro.estaMuerto()) return;
-        float delta = Gdx.graphics.getDeltaTime();
+    public void cambiarEstrategia(Supplier<EstrategiaCaida> fabrica) {
+        comprobarActiva();
+        Objects.requireNonNull(fabrica);
+        for (ObjetoCaida objeto : objetos) {
+            objeto.cambiarEstrategia(fabrica.get());
+        }
+        fabricaMovimiento = fabrica;
+    }
+
+    public void actualizarMovimiento(Tarro tarro, float delta) {
+        comprobarActiva();
+        Objects.requireNonNull(tarro);
+        if (!Float.isFinite(delta) || delta < 0) {
+            throw new IllegalArgumentException("Delta invalido");
+        }
+        if (tarro.estaHerido() || tarro.estaMuerto()) {
+            return;
+        }
         tiempoAcumulado += delta;
-        if (tiempoAcumulado >= 0.1f) {
+        if (tiempoAcumulado >= INTERVALO) {
             tiempoAcumulado = 0;
-            generarGota();
+            generarObjeto();
         }
-        for (int i = posiciones.size - 1; i >= 0; i--) {
-            Rectangle gota = posiciones.get(i);
-            gota.y -= 300 * delta;
-            boolean retirar = gota.y + gota.height < 0;
-            if (!retirar && tarro.colisionaCon(gota)) {
-                if (tipos.get(i) == 1) {
-                    tarro.dañar();
-                } else {
-                    tarro.sumarPuntos(10);
-                    sonidoGota.play();
-                }
-                retirar = true;
+        for (int i = objetos.size - 1; i >= 0; i--) {
+            if (objetos.get(i).actualizar(tarro, delta)) {
+                objetos.removeIndex(i);
             }
-            if (retirar) {
-                posiciones.removeIndex(i);
-                tipos.removeIndex(i);
+            if (tarro.estaHerido() || tarro.estaMuerto()) {
+                break;
             }
-            if (tarro.estaHerido() || tarro.estaMuerto()) break;
         }
+    }
+
+    public void reiniciar() {
+        comprobarActiva();
+        objetos.clear();
+        fabricaMovimiento = null;
+        tiempoAcumulado = 0;
+        generarObjeto();
     }
 
     @Override
     public void dibujar(SpriteBatch batch) {
-        for (int i = 0; i < posiciones.size; i++) {
-            Rectangle gota = posiciones.get(i);
-            Texture textura = tipos.get(i) == 1 ? texturaMala : texturaBuena;
-            batch.draw(textura, gota.x, gota.y);
+        comprobarActiva();
+        for (ObjetoCaida objeto : objetos) {
+            objeto.dibujar(batch);
         }
     }
 
     @Override
     public void destruir() {
+        if (destruida) {
+            return;
+        }
         musica.stop();
-        posiciones.clear();
-        tipos.clear();
+        objetos.clear();
+        destruida = true;
+    }
+
+    private void comprobarActiva() {
+        if (destruida) {
+            throw new IllegalStateException("Lluvia destruida");
+        }
     }
 }

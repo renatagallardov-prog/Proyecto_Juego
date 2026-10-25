@@ -1,0 +1,70 @@
+digraph G {
+graph [rankdir=TB,bgcolor="white",pad="0.2",nodesep="0.35",ranksep="0.5",splines=polyline];
+node [shape=plain,fontname="Arial",fontsize=12];
+edge [fontname="Arial",fontsize=10,color="#333333",arrowsize=0.8];
+Launcher [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="7"><TR><TD BGCOLOR="#E7EFF8"><B>Lwjgl3Launcher</B></TD></TR></TABLE>>];
+Startup [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="7"><TR><TD BGCOLOR="#E7EFF8"><B>StartupHelper</B></TD></TR></TABLE>>];
+App [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="7"><TR><TD BGCOLOR="#EEEEEE"><B>ApplicationAdapter</B></TD></TR></TABLE>>];
+C [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="7"><TR><TD BGCOLOR="#E7EFF8"><B>Constantes</B></TD></TR></TABLE>>];
+Game [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="7"><TR><TD BGCOLOR="#E7EFF8"><B>GameLluvia</B></TD></TR></TABLE>>];
+State [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="7"><TR><TD BGCOLOR="#F3E5F5">&lt;&lt;enumeration&gt;&gt;<BR/><B>GameLluvia.Estado</B></TD></TR></TABLE>>];
+Builder [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="7"><TR><TD BGCOLOR="#E7EFF8"><B>TarroBuilder</B></TD></TR></TABLE>>];
+Resources [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="7"><TR><TD BGCOLOR="#E7EFF8"><B>GestorRecursos</B></TD></TR></TABLE>>];
+Tarro [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="7"><TR><TD BGCOLOR="#E7EFF8"><B>Tarro</B></TD></TR></TABLE>>];
+Draw [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="7"><TR><TD BGCOLOR="#FFF2CC">&lt;&lt;interface&gt;&gt;<BR/><B>Dibujable</B></TD></TR></TABLE>>];
+Lluvia [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="7"><TR><TD BGCOLOR="#E7EFF8"><B>Lluvia</B></TD></TR></TABLE>>];
+Dispose [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="7"><TR><TD BGCOLOR="#FFF2CC">&lt;&lt;interface&gt;&gt;<BR/><B>Destruible</B></TD></TR></TABLE>>];
+Weighted [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="7"><TR><TD BGCOLOR="#E7EFF8"><B>FabricaGotasPonderada</B></TD></TR></TABLE>>];
+Factory [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="7"><TR><TD BGCOLOR="#FFF2CC">&lt;&lt;interface&gt;&gt;<BR/><B>FabricaGotas</B></TD></TR></TABLE>>];
+Drop [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="7"><TR><TD BGCOLOR="#E2F0D9">&lt;&lt;abstract&gt;&gt;<BR/><B>ObjetoCaida</B></TD></TR></TABLE>>];
+Strategy [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="7"><TR><TD BGCOLOR="#FFF2CC">&lt;&lt;interface&gt;&gt;<BR/><B>EstrategiaCaida</B></TD></TR></TABLE>>];
+Good [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="7"><TR><TD BGCOLOR="#E7EFF8"><B>GotaBuena</B></TD></TR></TABLE>>];
+Bad [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="7"><TR><TD BGCOLOR="#E7EFF8"><B>GotaMala</B></TD></TR></TABLE>>];
+Gold [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="7"><TR><TD BGCOLOR="#E7EFF8"><B>GotaDorada</B></TD></TR></TABLE>>];
+Straight [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="7"><TR><TD BGCOLOR="#E7EFF8"><B>CaidaRecta</B></TD></TR></TABLE>>];
+Accel [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="7"><TR><TD BGCOLOR="#E7EFF8"><B>CaidaAcelerada</B></TD></TR></TABLE>>];
+Zig [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="7"><TR><TD BGCOLOR="#E7EFF8"><B>CaidaZigzag</B></TD></TR></TABLE>>];
+Launcher -> Startup [style=dashed,arrowhead=vee,label="",constraint=false];
+Launcher -> Game [style=dashed,arrowhead=vee,label="",constraint=false];
+Game -> App [arrowhead=empty,label="",constraint=false];
+Game -> State [style=dashed,arrowhead=vee,label="",constraint=false];
+Game -> C [style=dashed,arrowhead=vee,label="",constraint=false];
+Game -> Builder [style=dashed,arrowhead=vee,label="",constraint=false];
+Builder -> Tarro [style=dashed,arrowhead=vee,label="",constraint=false];
+Game -> Tarro [dir=both,arrowtail=diamond,arrowhead=none,label="",headlabel="1",taillabel="1",constraint=false];
+Game -> Lluvia [dir=both,arrowtail=diamond,arrowhead=none,label="",headlabel="1",taillabel="1",constraint=false];
+Game -> Resources [style=dashed,arrowhead=vee,label="",constraint=false];
+Game -> Weighted [style=dashed,arrowhead=vee,label="",constraint=false];
+Tarro -> Draw [style=dashed,arrowhead=empty,label="",constraint=false];
+Lluvia -> Draw [style=dashed,arrowhead=empty,label="",constraint=false];
+Lluvia -> Dispose [style=dashed,arrowhead=empty,label="",constraint=false];
+Resources -> Dispose [style=dashed,arrowhead=empty,label="",constraint=false];
+Weighted -> Factory [style=dashed,arrowhead=empty,label="",constraint=false];
+Lluvia -> Factory [arrowhead=vee,label="",headlabel="1",constraint=false];
+Lluvia -> Drop [dir=both,arrowtail=diamond,arrowhead=none,label="",headlabel="0..*",taillabel="1",constraint=false];
+Good -> Drop [arrowhead=empty,label="",constraint=false];
+Bad -> Drop [arrowhead=empty,label="",constraint=false];
+Gold -> Drop [arrowhead=empty,label="",constraint=false];
+Drop -> Draw [style=dashed,arrowhead=empty,label="",constraint=false];
+Drop -> Strategy [arrowhead=vee,label="",headlabel="1",constraint=false];
+Straight -> Strategy [style=dashed,arrowhead=empty,label="",constraint=false];
+Accel -> Strategy [style=dashed,arrowhead=empty,label="",constraint=false];
+Zig -> Strategy [style=dashed,arrowhead=empty,label="",constraint=false];
+{rank=same; Launcher;Startup;App;C;}
+Launcher -> Startup -> App -> C [style=invis,weight=100];
+{rank=same; Game;State;Builder;Resources;}
+Game -> State -> Builder -> Resources [style=invis,weight=100];
+{rank=same; Tarro;Draw;Lluvia;Dispose;}
+Tarro -> Draw -> Lluvia -> Dispose [style=invis,weight=100];
+{rank=same; Weighted;Factory;Drop;Strategy;}
+Weighted -> Factory -> Drop -> Strategy [style=invis,weight=100];
+{rank=same; Good;Bad;Gold;}
+Good -> Bad -> Gold [style=invis,weight=100];
+{rank=same; Straight;Accel;Zig;}
+Straight -> Accel -> Zig [style=invis,weight=100];
+Launcher -> Game [style=invis,weight=100,minlen=2];
+Game -> Tarro [style=invis,weight=100,minlen=2];
+Tarro -> Weighted [style=invis,weight=100,minlen=2];
+Weighted -> Good [style=invis,weight=100,minlen=2];
+Good -> Straight [style=invis,weight=100,minlen=2];
+}

@@ -11,18 +11,22 @@ public abstract class ObjetoCaida implements Dibujable {
     private final Rectangle area;
     private final Texture textura;
     private final Color color;
-    private final EstrategiaCaida estrategia;
+    private EstrategiaCaida estrategia;
 
     protected ObjetoCaida(Texture textura, EstrategiaCaida estrategia,
             Color color) {
         this.textura = Objects.requireNonNull(textura);
         this.color = new Color(Objects.requireNonNull(color));
-        this.estrategia = Objects.requireNonNull(estrategia);
+        cambiarEstrategia(estrategia);
         area = new Rectangle(
                 MathUtils.random(0, Constantes.ANCHO
                         - Constantes.TAMANO_OBJETO),
                 Constantes.ALTO, Constantes.TAMANO_OBJETO,
                 Constantes.TAMANO_OBJETO);
+    }
+
+    public final void cambiarEstrategia(EstrategiaCaida nueva) {
+        estrategia = Objects.requireNonNull(nueva);
     }
 
     public final boolean actualizar(Tarro tarro, float delta) {
